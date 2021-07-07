@@ -1,28 +1,17 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    age: {{this.$store.state.age}} <br />
+    a age: {{this.$store.state.aa.age}} <br />
+    b age: {{this.$store.state.bb.age}} <br />
+    totalAge: {{this.$store.getters.totalAge}} <br />
+    <button @click="$store.state.age = 20">click state</button>
+    <button @click="$store.commit('bb/add', 10)">click commit</button> 
+    <button @click="$store.dispatch('addAsync', 20)">click dispatch</button>
   </div>
 </template>
-
 <script>
-import HelloWorld from './components/HelloWorld.vue'
 
 export default {
   name: 'App',
-  components: {
-    HelloWorld
-  }
 }
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
