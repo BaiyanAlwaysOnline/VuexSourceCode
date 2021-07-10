@@ -94,7 +94,8 @@ class Store {
     // 绑定commit的this, 可能是this.$store.commit(), 也有可能是在action中解构使用
     // ! 典型的发布订阅
     commit = (type, payload) => {
-        this._mutations[type] && this._mutations[type].forEach(mutation => mutation(payload));
+        if (this._mutations[type]) this._mutations[type].forEach(mutation => mutation(payload));
+        else console.error(type + ' namespace is not found');
     }
     dispatch = (type, payload) => {
         this._actions[type] && this._actions[type].forEach(action => action(payload));
