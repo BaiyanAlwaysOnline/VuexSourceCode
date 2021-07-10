@@ -4,7 +4,20 @@ import aa from './aa.js'
 import bb from './bb.js'
 Vue.use(Vuex);
 
+const persistStatePlugin = (store) => {
+    const data = localStorage.getItem('VUX-STATE');
+    if (data) {
+        store.replaceState(JSON.parse(data));
+    }
+    store.subscribe((mutation, state) => {
+        localStorage.setItem('VUX-STATE', JSON.stringify(state))
+    });
+}
+
 const store = new Vuex.Store({
+    plugins: [
+        persistStatePlugin
+    ],
     state: {
         name: 'by',
         age: 10,

@@ -3,6 +3,12 @@ import { forEachValue } from './utils.js';
 import ModuleCollection from './module-collections.js'
 let Vue;
 
+function getState(path, store) {
+    return path.reduce((newState, key) => {
+        return newState[key];
+    }, store.state);
+}
+
 function installModule(store, state, path, rootModule) {
     if (path.length) {
         // 说明非根，把module上的state挂到他的父节点上
@@ -16,11 +22,15 @@ function installModule(store, state, path, rootModule) {
         Vue.set(parent, child, rootModule.state);
     }
     const namespace = store._modules.getNamespace(path);
-    console.log(namespace);
     rootModule.forEachMutations((key, func) => {
         key = namespace + key
         store._mutations[key] = store._mutations[key] || [];
-        store._mutations[key].push((payload) => func.call(store, rootModule.state, payload));
+        store._mutations[key].push((payload) => {
+            // 这里不能用rootModule.state，而是每次去取最新的，否则relpaceState后页面就不更新了，
+            const newState = getState(path, store);
+            func.call(store, newState, payload);
+            store._subscribes.forEach((func) => func({type: key, payload}, store.state));
+        });
     })
     rootModule.forEachActions((key, func) => {
         key = namespace + key
@@ -30,7 +40,7 @@ function installModule(store, state, path, rootModule) {
     // 会覆盖
     rootModule.forEachGetters((key, func) => {
         key = namespace + key
-        store._gettersWrapper[key] = () => func.call(store, rootModule.state)
+        store._gettersWrapper[key] = () => func.call(store, getState(path, store))
     })
     rootModule.forEachChildren((key, childModule) => {
         installModule(store, state, path.concat(key), childModule);
@@ -62,6 +72,7 @@ class Store {
         this._mutations = {};
         this._actions = {};
         this._gettersWrapper = {};
+        this._subscribes = [];
         const store = this;
         // 1.模块收集 用户的数据 -> 树
         this._modules = new ModuleCollection(options);
@@ -72,6 +83,8 @@ class Store {
         installModule(store, state, [], this._modules.root);
         // 5.使state，getter响应式
         resetStoreVm(store, state);
+
+        options.plugins && options.plugins.forEach(func => func(store));
     }
     
     get state() {
@@ -85,6 +98,14 @@ class Store {
     }
     dispatch = (type, payload) => {
         this._actions[type] && this._actions[type].forEach(action => action(payload));
+    }
+
+    subscribe(func) {
+        this._subscribes.push(func)
+    }
+
+    replaceState(state) {
+        this._vm._data.$$state = state;
     }
 }
 
