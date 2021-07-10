@@ -1,8 +1,6 @@
-import cc from './cc.js';
 export default {
-    namespaced: true,
     state: {
-        age: 18
+        age: 33
     },
     getters: {
         totalAge(state) {
@@ -21,7 +19,4 @@ export default {
             }, 1000)
         }
     },
-    modules: {
-        cc
-    }
 }

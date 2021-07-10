@@ -1,11 +1,23 @@
 export default {
     namespaced: true,
     state: {
-        age: 20
+        age: 22
     },
-    mutations: {
+    getters: {
+        totalAge(state) {
+            return state.age + 100
+        }
+    },
+    mutations:{
         add(state, payload) {
             state.age += payload;
         }
-    }
+    },
+    actions: {
+        addAsync({commit}, payload) {
+            setTimeout(() => {
+                commit('bb/add', 10)
+            }, 1000)
+        }
+    },
 }

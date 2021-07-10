@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import Vuex from 'vuex';
+import Vuex from '@/vuex';
 import aa from './aa.js'
 import bb from './bb.js'
 Vue.use(Vuex);
