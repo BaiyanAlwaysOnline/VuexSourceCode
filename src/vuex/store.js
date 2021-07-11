@@ -81,9 +81,9 @@ class Store {
         // 4.把所有的子模块的状态安装到父模块的状态上
         // 5.增加命名空间
         installModule(store, state, [], this._modules.root);
-        // 5.使state，getter响应式
+        // 6.使state，getter响应式
         resetStoreVm(store, state);
-
+        // 7.注册插件
         options.plugins && options.plugins.forEach(func => func(store));
     }
     
