@@ -1,9 +1,16 @@
 import Vue from 'vue'
-import App from './App.vue'
-import store from './store';
+// ! vuex dev
+// import App from './App.vue'
+// import store from './store';
+// ! vue-router dev
+import router from './router.js';
+import Root from './Root.vue'
 Vue.config.productionTip = false
+Vue.config.devtools = false;
+
 
 new Vue({
-  store,
-  render: h => h(App),
+  // store,
+  router,
+  render: h => h(Root),
 }).$mount('#app')
